@@ -1,0 +1,53 @@
+version: "3.8"
+
+services:
+  nginx:
+    container_name: nginx
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+      - frontend
+      - db
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./src:/var/www
+  db:
+    image: postgres
+    container_name: db
+    volumes:
+      - ./postgresql:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: books
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgAdmin
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    environment:
+      PGADMIN_DEFAULT_EMAIL: hanieasemi76@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: password
+  backend:
+    container_name: backend
+    build:
+      context: ./php
+      dockerfile: Dockerfile
+    volumes:
+      - ./src/backend:/var/www/backend
+    ports:
+      - "9000:9000"
+    working_dir: /var/www/backend
+  frontend:
+    container_name: frontend
+    build:
+      context: ./src/frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
