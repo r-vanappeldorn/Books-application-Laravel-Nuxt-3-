@@ -37,7 +37,7 @@ services:
   backend:
     container_name: backend
     build:
-      context: ./php
+      context: ./src/backend
       dockerfile: Dockerfile
     volumes:
       - ./src/backend:/var/www/backend
