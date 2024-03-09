@@ -1,7 +1,10 @@
 FROM php:8.1.2-fpm
 
+WORKDIR /var/www 
+
+COPY . /var/www/
+
 # Install composer
-RUN echo "\e[1;33mInstall COMPOSER\e[0m"
 RUN cd /tmp \
     && curl -sS https://getcomposer.org/installer | php \
     && mv composer.phar /usr/local/bin/composer
@@ -53,3 +56,7 @@ RUN apt-get -y install --fix-missing \
 RUN apt-get install -y libpq-dev \
     && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
     && docker-php-ext-install pdo pdo_pgsql pgsql
+
+EXPOSE 9000
+
+CMD bash -c "composer install && php artisan serve --host 0.0.0.0 --port 9000"
